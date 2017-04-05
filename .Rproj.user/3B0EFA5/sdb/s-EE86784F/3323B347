@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "library(shiny)\nlibrary(lubridate)\nlibrary(ggmap)\nlibrary(leaflet)\n\n\n##### Data From: https://data.world/jamesgray/missing-children-in-the-us\n# missing.persons = read.csv(\"https://query.data.world/s/57mcfy9olvjsi3imujwdh9xoq\",header=T)\n# missing.persons$location = paste(missing.persons$missingfromcity,\", \",\n#                                  missing.persons$missingfromstate,\", \",\n#                                  missing.persons$missingfromcountry,\n#                                  sep='')\n#####\n\n##### Grabbed all places, geo coded, wrote to a csv to save time\n#places = unique(missing.persons$location)\n#places.latlon = geocode(places)\n#places.df = cbind(places,places.latlon)\n#write.csv(places.df,'places_latlon.csv',row.names=FALSE)\n#places = read.csv('places_latlon.csv')\n######\n\n###### Merged data and created new file\n# df = merge(missing.persons,places,by.x='location',by.y='places')\n# write.csv(df,'missing_persons_data_joined.csv',row.names=FALSE)\n######\n\ndf = read.csv('missing_persons_data_joined.csv')\ndf$age = round(as.numeric((today() - as.Date(df$birthdate))/365),1)\ndf$ageGoneMissingFrom = round(as.numeric((as.Date(df$missingfromdate) - as.Date(df$birthdate))/365),1)\ndf$ageGoneMissingReported = round(as.numeric((as.Date(df$missingreporteddate) - as.Date(df$birthdate))/365),1)\ndf$missingToReportedYears = round(as.numeric((as.Date(df$missingreporteddate) - as.Date(df$missingfromdate))/365),1)\ndf$currentYearsMissing = round(as.numeric((today() - as.Date(df$missingfromdate))/365),1)\n\nr_colors <- rgb(t(col2rgb(colors()) / 255))\nnames(r_colors) <- colors()\n\nui <- fluidPage(\n  leafletOutput(\"mymap\"),\n  p(),\n  actionButton(\"recalc\", \"New points\")\n)\n\nserver <- function(input, output, session) {\n  \n  points <- eventReactive(input$recalc, {\n    cbind(rnorm(40) * 2 + 13, rnorm(40) + 48)\n  }, ignoreNULL = FALSE)\n  \n  output$mymap <- renderLeaflet({\n    leaflet() %>%\n      addProviderTiles(providers$Stamen.TonerLite,\n                       options = providerTileOptions(noWrap = TRUE)\n      ) %>%\n      addMarkers(data = points())\n  })\n}\n\nshinyApp(ui, server)",
+    "created" : 1491341773852.000,
+    "dirty" : true,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3920927965",
+    "id" : "3323B347",
+    "lastKnownWriteTime" : 1491357425,
+    "last_content_update" : 1491357972890,
+    "path" : "~/Documents/GitHub/Missing-Persons/app.R",
+    "project_path" : "app.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

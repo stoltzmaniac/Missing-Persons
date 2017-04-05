@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "library(lubridate)\nlibrary(ggmap)\n\n##### Data From: https://data.world/jamesgray/missing-children-in-the-us\n# missing.persons = read.csv(\"https://query.data.world/s/57mcfy9olvjsi3imujwdh9xoq\",header=T)\n# missing.persons$location = paste(missing.persons$missingfromcity,\", \",\n#                                  missing.persons$missingfromstate,\", \",\n#                                  missing.persons$missingfromcountry,\n#                                  sep='')\n#####\n\n##### Grabbed all places, geo coded, wrote to a csv to save time\n#places = unique(missing.persons$location)\n#places.latlon = geocode(places)\n#places.df = cbind(places,places.latlon)\n#write.csv(places.df,'places_latlon.csv',row.names=FALSE)\n#places = read.csv('places_latlon.csv')\n######\n\n###### Merged data and created new file\n# df = merge(missing.persons,places,by.x='location',by.y='places')\n# write.csv(df,'missing_persons_data_joined.csv',row.names=FALSE)\n######\n\ndf = read.csv('missing_persons_data_joined.csv')\ndf$age = round(as.numeric((today() - as.Date(df$birthdate))/365),1)\ndf$ageGoneMissingFrom = round(as.numeric((as.Date(df$missingfromdate) - as.Date(df$birthdate))/365),1)\ndf$ageGoneMissingReported = round(as.numeric((as.Date(df$missingreporteddate) - as.Date(df$birthdate))/365),1)\ndf$missingToReportedYears = round(as.numeric((as.Date(df$missingreporteddate) - as.Date(df$missingfromdate))/365),1)\ndf$currentYearsMissing = round(as.numeric((today() - as.Date(df$missingfromdate))/365),1)\ndf$missingReportedHour = hour(df$missingreporteddate)\ndf$missingReportedDayOfWeek = wday(df$missingreporteddate,label=TRUE) \ndf$missingFromHour = hour(df$missingfromdate)\ndf$missingFromDayOfWeek = wday(df$missingfromdate,label=TRUE)\ndf$childName = paste(df$childfirstname, df$childlastname)\n\n\nlibrary(googleVis)\np = gvisGeoChart(df,\"missingfromstate\",colorvar=\"ageGoneMissingReported\",options=list(region=\"US\", \n                                                                     displayMode=\"regions\", \n                                                                     resolution=\"provinces\",\n                                                                     width=600, height=400))\n\nplot(p)\n\nGeoStates <- gvisGeoChart(states, \"state.name\", \"Illiteracy\",\n                          options=list(region=\"US\", \n                                       displayMode=\"regions\", \n                                       resolution=\"provinces\",\n                                       width=600, height=400))\nplot(GeoStates)",
+    "created" : 1491358059700.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3871590320",
+    "id" : "75E013E2",
+    "lastKnownWriteTime" : 1491360009,
+    "last_content_update" : 1491360009217,
+    "path" : "~/Documents/GitHub/Missing-Persons/workspace.R",
+    "project_path" : "workspace.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
