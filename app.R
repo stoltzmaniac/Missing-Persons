@@ -26,9 +26,11 @@ library(leaflet)
 ######
 
 df = read.csv('missing_persons_data_joined.csv')
-df$yearsOld = round(as.numeric((today() - as.Date(df$birthdate))/365),1)
-df$ageGoneMissing = round(as.numeric((today() - df$birthdate)/365),1)
-df$yearsMissing = round(as.numeric((today() - as.Date(df$missingfromdate))/365),1)
+df$age = round(as.numeric((today() - as.Date(df$birthdate))/365),1)
+df$ageGoneMissingFrom = round(as.numeric((as.Date(df$missingfromdate) - as.Date(df$birthdate))/365),1)
+df$ageGoneMissingReported = round(as.numeric((as.Date(df$missingreporteddate) - as.Date(df$birthdate))/365),1)
+df$missingToReportedYears = round(as.numeric((as.Date(df$missingreporteddate) - as.Date(df$missingfromdate))/365),1)
+df$currentYearsMissing = round(as.numeric((today() - as.Date(df$missingfromdate))/365),1)
 
 r_colors <- rgb(t(col2rgb(colors()) / 255))
 names(r_colors) <- colors()
